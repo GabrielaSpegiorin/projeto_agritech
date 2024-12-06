@@ -1,0 +1,63 @@
+<%- include('../includes/header.ejs', { titulo : 'Lista produtos'}) %>
+
+<main>
+    <h2>Lista de produtos</h2>
+
+    <a href="/produtos/novo" class="btn btn-primary"> Adicionar produto</a>
+
+    <form action="/produtos/" method="GET" class="form form-consulta">
+        <input type="text" name="busca" 
+            value="<%= busca %>"
+            placeholder="Buscar produto" />
+         <button type="submit" class="btn btn-primary">Buscar</button>
+         <select name="ordenar" onchange="this.form.submit()">
+          <option value="nome_produto" 
+            <%= ordenar == 'nome_produto' ? 'selected' : '' %> >Ordenar por categoria</option>
+            <option value="valor" 
+            <%= ordenar == 'valor' ? 'selected' : '' %> >Ordenar por valor</option>
+            <option value="estoque" 
+            <%= ordenar == 'estoque' ? 'selected' : '' %> >Ordenar por estoque</option>
+        </select> 
+      </form>
+
+    
+
+        <section class=" row justify-content-center "> 
+            <% for (let produto of produtos) { %>
+                <div class="card" style="width: 18rem;">
+                    <img src="<%= produto.imagem %>" class="card-img-top">
+                    <div class="card-body">
+                        <h5 class="card-title"><%= produto.nome_produto %></h5>
+                        <p class="card-text">Valor: <%= produto.valor %></p>
+                        <p class="card-text">Estoque: <%= produto.estoque %></p>
+                        <p class="card-text">Estoque Minímo: <%= produto.estoque_minimo %></p>
+                        <p class="card-text">Categoria: <%= produto.nome_categoria %></p>
+                        <div class="mt-2 mb-3 d-flex justify-content-around">
+                            <a href="/produtos/<%= produto.id_produto%>/editar" class="btn btn-edit"> <i class="bi bi-pencil-square"></i> Editar</a>
+                            <form action="/produtos/<%= produto.id_produto%>/deletar" method="post" onsubmit="return confirmDelete()">
+                                <button type="submit" class="btn btn-primary"><i class="bi bi-trash3"></i>Excluir</button>
+                            </form>
+                        </div>  
+                    </div>
+                </div>
+            <% } %>
+        </section>              
+        
+    </div>
+       
+  
+<div class="pagination">
+    <% if(pgAtual > 1) {%> 
+        <a href="/produtos?pg=<%= pgAtual-1 %>">Anterior</a>
+    <% } %>
+
+    <span>Página <%= pgAtual %> de <%= totalPgs %> </span>
+
+    <% if(pgAtual < totalPgs) {%> 
+        <a href="/produtos?pg=<%= pgAtual+1 %>">Próxima</a>
+    <% } %>
+
+</div>
+</main>
+
+<%- include('../includes/footer.ejs') %>

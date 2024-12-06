@@ -1,0 +1,269 @@
+<%- include('../includes/header.ejs', { titulo : 'Dashboard'}) %>
+
+<main class="container-fluid">
+    <div class="text-bg-success p-3 text-white text-center py-3 mb-4">
+        <h1>Gerenciamento de estoque</h1>
+    </div>
+    
+    <!-- Cards principais com valores -->
+    <section class="row text-center mb-4">
+        <!-- Card Total de categorias-->
+         <div class="col-md-3">
+            <div class="card shadow-sm card-dec">
+                <div class="card-body">
+                <h5 class="card-title">Total de categorias</h5>
+                <p class="card-text display-4"><%= totalCategorias %></p>
+                </div>
+            </div>
+         </div>
+
+         <!-- Card Total de Disciplinas-->
+         <div class="col-md-3">
+            <div class="card shadow-sm card-dec">
+                <div class="card-body">
+                <h5 class="card-title">Total de produtos</h5>
+                <p class="card-text display-4"><%= totalProdutos %></p>
+                </div>
+            </div>
+         </div>
+
+         <!-- Card Total de Taxa de Aprovação-->
+         <div class="col-md-3">
+            <div class="card shadow-sm card-dec">
+                <div class="card-body">
+                <h5 class="card-title">Valor Total em Estoque</h5>
+                <p class="card-text display-4">44900.00</p>
+                </div>
+            </div>
+         </div>
+
+         <!-- Card Total de Alunos Reprovados-->
+         <div class="col-md-3">
+            <div class="card shadow-sm card-dec">
+                <div class="card-body">
+                <h5 class="card-title">Nº Prod. em Estoque Mínimo</h5>
+                <p class="card-text display-4">2</p>
+                </div>
+            </div>
+         </div>
+
+    </section>
+
+    <!-- Seção dos gráfico-->
+     <section class="row">
+        <!-- Gráfico de Barras -->
+         <div class="col-md-4">
+            <div class="card shadow-sm">
+                <div class="card-header text-bg-success p-3 text-white">
+                    Valor Estoque por Categoria
+                </div>
+                <div class="card-body"> 
+                    <canvas id="barrasEstoqueCategorias"></canvas>
+                </div>
+            </div>
+         </div>
+
+
+           
+         <!-- Gráfico de Barras -->
+         <div class="col-md-4">
+            <div class="card shadow-sm">
+                <div class="card-header text-bg-success p-3 text-white">
+                    Estoque Produtos
+                </div>
+                <div class="card-body"> 
+                    <canvas id="barraEstoqueProdutos"></canvas>
+                </div>
+            </div>
+         </div>
+
+
+         <!-- Gráfico de pizza -->
+         <div class="col-md-4">
+            <div class="card shadow-sm">
+                <div class="card-header text-bg-success p-3 text-white">
+                    Estoque Mínimo
+                </div>
+                <div class="card-body"> 
+                    <canvas id="pizzaProdutos"></canvas>
+                </div>
+            </div>
+         </div>
+
+     </section>
+
+</main>
+
+<script>
+    //recebendo o vetor mediaDisciplinas com o resultado da consulta do Banco de dados
+    const dadosEstoqueCategoria = <%- JSON.stringify(estoqueCategoria) %>
+
+    const dadosEstoqueProduto = <%- JSON.stringify(estoqueProduto) %>
+
+    //Extraindo nome e médias para gerar vetores individuais para os dados do grafico
+    const categorias = dadosEstoqueCategoria.map(d => d.nome_categoria)
+    const valorTotal = dadosEstoqueCategoria.map(d => d.sum) 
+
+    const produtos = dadosEstoqueProduto.map(d => d.nome_produto)
+    const quantidade = dadosEstoqueProduto.map(d =>d.estoque)
+
+     
+    //MODELO PARA FAZER GRÁFICO
+    // Bar Chart - barras
+    const barCtx = document.getElementById('barrasEstoqueCategorias').getContext('2d');
+    new Chart(barCtx, {
+        type: 'bar', //tipo de grafico
+        data: {
+            labels: categorias,
+            datasets: [{
+                label: 'Valor em Estoque',
+                data: valorTotal ,
+                backgroundColor: ['#007bff', '#28a745', '#ffc107', '#dc3545', '#6f42c1']
+            }]
+        },
+        options: {
+            responsive: true,
+            plugins: {
+                legend: { display: true },
+                tooltip: { enabled: true }
+            }
+        }
+        
+    });
+
+    //MODELO PARA FAZER GRÁFICO
+    // Bar Chart - barras
+    const barCtx2 = document.getElementById('barraEstoqueProdutos').getContext('2d');
+    new Chart(barCtx2, {
+        type: 'bar', //tipo de grafico
+        data: {
+            labels:  produtos,
+            datasets: [{
+                label: 'Quantidade',
+                data:  quantidade,
+                backgroundColor: ['#007bff', '#28a745', '#ffc107', '#dc3545', '#6f42c1']
+            }]
+        },
+        options: {
+            responsive: true,
+            plugins: {
+                legend: { display: true },
+                tooltip: { enabled: true }
+            }
+        }
+        
+    });
+
+    
+    //Gráfico de Pizza das Aprovações dos Alunos
+         const pieCtx = document.getElementById('pizzaProdutos').getContext('2d');
+            new Chart(pieCtx, {
+                type: 'pie',
+                data: {
+                    labels: ["Acima do estoque mínimo","Abaixo do estoque mínimo"],
+                    datasets: [{
+                        data: [<%= estoqueABmin %>, <%= estoqueACmin %>],
+                        backgroundColor: ['#28a745', '#dc3545', '#ffc107']
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    plugins: {
+                        legend: { display: true },
+                        tooltip: { enabled: true }
+                    }
+                }
+            });
+
+
+</script>
+
+
+
+
+
+
+
+
+
+
+
+<!-- table section -->
+
+<section class="card shadow-sm mt-4">
+    <div class="card-header bg-success text-white"> Produtos abaixo do estoque mínimo
+    </div>
+    <div class="card-body">
+        <table class="table-striped dados-table">
+            <thead>
+                <tr class="bg-success">
+                    <th class="w-25 h-25">Foto</th>
+                    <th>Produtos</th>
+                    <th>Categoria</th>
+                    <th>Estoque mínimo</th>
+                    <th>Estoque</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>
+                    <img class="w-25" src="https://superprix.vteximg.com.br/arquivos/ids/178639-292-292/Tomate-1-unidade-aprox-250g.png?v=636868090295370000" alt class="img-lista"></td>
+                    <td>Tomate</td>
+                    <td>Alimentos</td>
+                    <td>120</td>
+                    <td>30</td>
+                </tr>
+                <tr>
+                    <td>
+                    <img class="w-25" src="https://www.valtra.com.br/content/dam/public/valtra/pt-br/produtos/tratores/a2r/imagem-trator.jpg" alt class="img-lista"></td>
+                    <td>Trator</td>
+                    <td>Máquinarios</td>
+                    <td>25</td>
+                    <td>5</td>
+                </tr>
+                <tr>
+                    <td>
+                    <img class="w-25" src="https://images.tcdn.com.br/img/img_prod/859641/enxada_antifaiscante_289_1_955efc5854d4b4562f765e63fe7ecab4.png" alt="img-lista">
+                    </td>
+                    <td>Enxada</td>
+                    <td>Ferramentas</td>
+                    <td>3</td>
+                    <td>20</td>
+                </tr>
+                <tr>
+                    <td>
+                        <img class="w-25" src="https://miniplantas.cdn.magazord.com.br/img/2022/03/produto/279/vitaplan-fertilizante-10-10-10-1kg.jpg?ims=fit-in/630x865/filters:fill(white)" alt="img-lista">
+                        <td>vitaPlan fertilizantes</td>
+                        <td>Fertilizante</td>
+                        <td>100</td>
+                        <td>90</td>
+                    </td>
+                   
+                    <tr>
+                        <td>
+                            <img class="w-25" src="https://santil.jetassets.com.br/produto/1624594Alicate-Universal-1050-109266474551.jpg">
+                        </td>
+                        <td>Alicate</td>
+                        <td>Ferramentas</td>
+                        <td>615</td>
+                        <td>500</td>
+                    </tr>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+
+</section>
+
+<footer>
+    <p>2024 Sistema de Gerenciamento de Estoque / SESI / SENAI</p>
+</footer>
+<script> const confirmDelete = () => confirm("Tem certeza de que deseja excluir?")
+</script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
+    
+</script>
+
+<%- include('../includes/footer.ejs') %>
+
+

@@ -1,0 +1,142 @@
+<%- include('../includes/header.ejs', { titulo : 'Editar produto'}) %>
+
+<main>
+   <h2>Editando produto: <strong><%= produtos.nome_produto %> </strong> </h2>
+   <div class="container">
+        <!-- Tab Navigation -->
+        <ul class="nav nav-tabs" id="myTab" role="tablist">
+            <li class="nav-item">
+                <button class="nav-link active" data-bs-toggle="tab" data-bs-target="#editar" type="button"
+                    aria-controls="editar" aria-selected="true">
+                    Editar Produto
+                </button>
+            </li>
+            <li class="nav-item">
+                <button class="nav-link" data-bs-toggle="tab" data-bs-target="#lancar-movimentacao" type="button"
+                    aria-controls="lancar-movimentacao" aria-selected="false">
+                    Lançar Movimentação
+                </button>
+            </li>
+            <li class="nav-item">
+                <button class="nav-link" data-bs-toggle="tab" data-bs-target="#mov" type="button"
+                    aria-controls="mov" aria-selected="false">
+                    Movimentações
+                </button>
+            </li>
+        </ul>
+    
+
+            <!-- Tab Content -->
+            <div class="tab-content" id="myTabContent">
+                <!-- Aba para Editar o Produto -->
+                <div class="tab-pane fade show active p-3" id="editar">
+                    <form action="/produtos/<%= produtos.id_produto %>/editar" method="post" class="form" enctype="multipart/form-data">
+                        <div class="form-group">
+                            <label for="nome_produto">Nome do produto:</label>
+                            <input type="text" id="nome_produto" name="nome_produto" value="<%= produtos.nome_produto %>" required>
+                        </div>
+        
+                        <div class="form-group">
+                            <label for="foto_produto">Foto do produto:</label>
+                            <div class="d-flex">
+                                <img src="<%=produtos.imagem %>" alt="" style="width: 100px; object-fit: container">
+                                <input type="file" id="file" name="file">
+                            </div>
+                            <input type="hidden" id="foto_produto" name="foto_produto" value="<%= produtos.imagem %>">
+                        </div>
+        
+                        <div class="form-group">
+                            <label for="estoque">Estoque:</label>
+                            <input type="number" id="estoque" name="estoque" value="<%= produtos.estoque %>" required>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="estoque_minimo">Estoque_minimo:</label>
+                            <input type="number" id="estoque_minimo" name="estoque_minimo" value="<%= produtos.estoque_minimo %>" required>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="valor">Valor:</label>
+                            <input type="number" id="valor" value="<%= produtos.valor %>" name="valor" required>
+                        </div>
+        
+                        <div class="form-group">
+                            <label for="id_categoria">Categoria:</label>
+                            <select id="id_categoria" name="id_categoria">
+                                <option>Selecione uma Categoria</option>
+                                    <% for (let categorias of categoriaCadastrados ) { %>
+                                <option value="<%= categorias.id_categoria %>"><%= categorias.nome_categoria %></option>
+                                    <% } %>
+                            </select>
+                        </div>
+        
+                        <!-- <input type="text" id="id_categoria" value="<= produtos.nome_categoria >" name="id_categoria" required>// -->
+        
+                        <button type="submit" class="btn btn-primary"> Salvar alterações </button>
+                            <a href="/produtos" class="btn btn-secondary">Cancelar</a>
+        
+                    </form>
+                </div>      
+            
+
+                <!-- Aba para lançar movimentaçoes -->
+                <div class="tab-pane fade p-3" id="lancar-movimentacao">
+                    <form action="/produtos/<%= produtos.id_produto %>/lancar-movimentacao" method="POST" class="form">
+                        <div class="form-group">
+                            <label for="tipo_movimentacao">Tipo de movimentação:</label>
+                            <select id="tipo_movimentacao" name="tipo_movimentacao">
+                                <option value="S" >Saída</option>
+                                <option value="E" >Entrada</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="media">Estoque atual:</label>
+                            <input type="number" id="estoque" name="estoque" value="<%= produtos.estoque %>" readonly>
+                        </div>
+                        <div class="form-group">
+                            <label for="faltas">Quantidade:</label>
+                            <input type="number" id="quantidade" name="quantidade" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="descricao">Descrição:</label>
+                            <input type="text" id="descricao" name="descricao" required>
+                        </div>
+                        <button type="submit" class="btn btn-primary"> Gravar </button>
+                        <a href="/produtos" class="btn btn-secondary">Cancelar</a>
+                
+                    
+                    </form>
+                </div>
+
+                <!-- Aba para exibir as notas -->
+                <div class="tab-pane fade p-3" id="mov">
+                    <h4>Movimentações de produto</h4>
+                    <table class="dados-table">
+                        <thead>
+                            <tr>
+                                <th>Tipo de movimentação</th>
+                                <th>Data</th>
+                                <th>Quantidade</th>
+                                <th>Descrição</th>
+                                <th>Estoque</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <% for (let movimentacao of Movimentacoes ) {%>
+                                <tr>
+                                    <td> <%= movimentacao.tipo_movimentacao %> </td>
+                                    <td> <%= movimentacao.data %> </td>
+                                    <td> <%= movimentacao.quantidade %> </td>
+                                    <td> <%= movimentacao.descricao %> </td>
+                                    <td> <%= movimentacao.estoque %> </td>
+
+                                </tr>
+                            <% } %>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+    </div>
+</main>
+
+<%- include('../includes/footer.ejs') %>

@@ -1,0 +1,55 @@
+<%- include ('../includes/header.ejs', {titulo : 'Lista usuario'}) %>
+
+<main>
+    <h2>Lista de Usuário</h2>
+    <a href="/usuario/novo" class="btn btn-primary"> + Adicionar Usuário</a>
+
+    <form action="/usuario/" method="GET" class="form form-consulta">
+        <input type="text" name="busca" 
+            value="<%= busca %>"
+            placeholder="Buscar usuario" />
+        <button type="submit" class="btn btn-primary">Buscar</button>
+        <select name="ordenar" onchange="this.form.submit()" >
+          <option value="nome" 
+            <%= ordenar == 'nome' ? 'selected' : '' %> >Ordenar por usuario</option>
+
+        </select>
+      </form>
+
+    <table class="dados-table">
+        <thead>
+            <tr>
+                <th> Usuários</th>
+                <th> Ações</th>
+            </tr>
+        </thead>
+        <tbody>
+            <% for (let usuario of vetorDados) { %>
+                <tr>
+                    <td><%= usuario.nome %></td>
+                    <td>
+                        <a href="/usuario/<%= usuario.id_usuario%>/editar" class="btn btn-edit">Editar</a>
+                        <form action="/usuario/<%= usuario.id_usuario%>/deletar" method="post" onsubmit="return confirmDelete()">
+                            <button type="submit" class="btn btn-delete">Excluir</button>
+                        </form>
+                    </td>
+                </tr>   
+            <% } %>
+        </tbody>
+    </table>
+
+    <div class="pagination">
+        <% if(pgAtual > 1) {%> 
+            <a href="/professores?pg=<%= pgAtual-1 %>">Anterior</a>
+        <% } %>
+    
+        <span>Página <%= pgAtual %> de <%= totalPgs %> </span>
+    
+        <% if(pgAtual < totalPgs) {%> 
+            <a href="/professores?pg=<%= pgAtual+1 %>">Próxima</a>
+        <% } %>
+    
+    </div>
+</main>
+
+<%- include ('../includes/footer.ejs') %>

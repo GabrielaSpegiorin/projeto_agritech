@@ -1,0 +1,16 @@
+<%- include ('../includes/header.ejs', {titulo : 'Lista de categorias'}) %>
+
+<main>
+    <h2>Adicionar Nova Categoria</h2>
+
+    <form action="/categorias/novo" method="post" class="form">
+        <div class="form-group">
+            <label for="nome_categoria"> Nome da Categoria</label>
+            <input type="text" id="id_categoria" name="nome_categoria" required>
+        </div>
+        <button type="submit" class="btn btn-primary">Adicionar</button>
+        <a href="/categorias" class="btn btn-secondary">Cancelar</a>
+    </form>
+</main>
+
+<%- include ('../includes/footer.ejs') %>

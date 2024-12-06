@@ -1,0 +1,57 @@
+<%- include ('../includes/header.ejs', {titulo : 'Lista Alunos'}) %>
+
+<main>
+    <h2>Lista de Categorias</h2>
+    <a href="/categorias/novo" class="btn btn-primary"> + Adicionar Categoria</a>
+
+    <form action="/categorias/" method="GET" class="form form-consulta">
+        <input type="text" name="busca" 
+            value="<%= busca %>"
+            placeholder="Buscar categoria" />
+        <button type="submit" class="btn btn-primary">Buscar</button>
+        <select name="ordenar" onchange="this.form.submit()" >
+          <option value="nome_categoria" 
+            <%= ordenar == 'nome_categoria' ? 'selected' : '' %> >Ordenar por categoria</option>
+
+        </select>
+      </form>
+  
+
+
+    <table class="dados-table">
+        <thead>
+            <tr>
+                <th> Categorias</th>
+                <th> Ações</th>
+            </tr>
+        </thead>
+        <tbody>
+            <% for (let categoria of categorias) { %>
+                <tr>
+                    <td><%= categoria.nome_categoria %></td>
+                    <td>
+                        <a href="/categorias/<%= categoria.id_categoria%>/editar" class="btn btn-edit">Editar</a>
+                        <form action="/categorias/<%= categoria.id_categoria%>/deletar" method="post">
+                            <button type="submit" class="btn btn-delete">Excluir</button>
+                        </form>
+                    </td>
+                </tr>   
+            <% } %>
+        </tbody>
+    </table>
+
+    <div class="pagination">
+        <% if(pgAtual > 1) {%> 
+            <a href="/professores?pg=<%= pgAtual-1 %>">Anterior</a>
+        <% } %>
+    
+        <span>Página <%= pgAtual %> de <%= totalPgs %> </span>
+    
+        <% if(pgAtual < totalPgs) {%> 
+            <a href="/professores?pg=<%= pgAtual+1 %>">Próxima</a>
+        <% } %>
+    
+    </div>
+</main>
+
+<%- include ('../includes/footer.ejs') %>
